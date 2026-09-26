@@ -780,5 +780,104 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
   window.addEventListener('pagehide',stopCamera);
 })();
 </script>
+
+   <script>
+/* ===== BTS RANDOM TAPE PATCH ===== */
+(function () {
+  const BTS_SONGS = [
+    ["SPRING DAY", "YOU NEVER WALK ALONE"],
+    ["DYNAMITE", "BE"],
+    ["BUTTER", "BUTTER"],
+    ["LIFE GOES ON", "BE"],
+    ["BOY WITH LUV", "MAP OF THE SOUL : PERSONA"],
+    ["DNA", "LOVE YOURSELF 承 HER"],
+    ["FAKE LOVE", "LOVE YOURSELF 轉 TEAR"],
+    ["BLACK SWAN", "MAP OF THE SOUL : 7"],
+    ["ON", "MAP OF THE SOUL : 7"],
+    ["EUPHORIA", "LOVE YOURSELF 結 ANSWER"],
+    ["MIKROKOSMOS", "MAP OF THE SOUL : PERSONA"],
+    ["HOME", "MAP OF THE SOUL : PERSONA"],
+    ["MAGIC SHOP", "LOVE YOURSELF 結 ANSWER"],
+    ["RUN", "THE MOST BEAUTIFUL MOMENT IN LIFE Pt.2"],
+    ["I NEED U", "THE MOST BEAUTIFUL MOMENT IN LIFE Pt.1"],
+    ["FIRE", "YOUNG FOREVER"],
+    ["SAVE ME", "YOUNG FOREVER"],
+    ["IDOL", "LOVE YOURSELF 結 ANSWER"],
+    ["MIC DROP", "LOVE YOURSELF 結 ANSWER"],
+    ["GO GO", "LOVE YOURSELF 承 HER"],
+    ["ANPANMAN", "LOVE YOURSELF 結 ANSWER"],
+    ["DIS-EASE", "BE"],
+    ["TELEPATHY", "BE"],
+    ["PARADISE", "LOVE YOURSELF 轉 TEAR"],
+    ["YOUR EYES TELL", "MAP OF THE SOUL : 7"],
+    ["BUTTERFLY", "THE MOST BEAUTIFUL MOMENT IN LIFE Pt.2"],
+    ["AWAKE", "WINGS"],
+    ["EPIPHANY", "LOVE YOURSELF 結 ANSWER"],
+    ["SERENDIPITY", "LOVE YOURSELF 結 ANSWER"],
+    ["THE TRUTH UNTOLD", "LOVE YOURSELF 轉 TEAR"],
+    ["JUST ONE DAY", "SKOOL LUV AFFAIR"],
+    ["DANGER", "DARK & WILD"],
+    ["FILM OUT", "BTS, THE BEST"],
+    ["WE ARE BULLETPROOF : THE ETERNAL", "MAP OF THE SOUL : 7"],
+    ["EPILOGUE : YOUNG FOREVER", "YOUNG FOREVER"]
+  ];
+
+  let currentSong = BTS_SONGS[0];
+  let previousSong = null;
+
+  function randomSong() {
+    let song;
+
+    do {
+      song = BTS_SONGS[Math.floor(Math.random() * BTS_SONGS.length)];
+    } while (
+      BTS_SONGS.length > 1 &&
+      previousSong &&
+      song[0] === previousSong[0]
+    );
+
+    previousSong = song;
+    currentSong = song;
+
+    document.getElementById("songname").textContent = song[0];
+
+    const small = document.querySelector(".clabel .txt small");
+    if (small) {
+      small.textContent = "BTS · " + song[1];
+    }
+  }
+
+  /*
+    Detect when a new result is revealed.
+    The original Fable code adds .show to #result after every photo.
+  */
+  const result = document.getElementById("result");
+
+  new MutationObserver(() => {
+    if (result.classList.contains("show")) {
+      randomSong();
+    }
+  }).observe(result, {
+    attributes: true,
+    attributeFilter: ["class"]
+  });
+
+  /*
+    Update the cassette player text after the original
+    PLAY TAPE handler runs.
+  */
+  document.getElementById("playbtn").addEventListener("click", () => {
+    setTimeout(() => {
+      const nowtxt = document.getElementById("nowtxt");
+
+      if (document.getElementById("cassette").classList.contains("spinning")) {
+        nowtxt.textContent = "NOW PLAYING: BTS — " + currentSong[0];
+      }
+    }, 0);
+  });
+
+})();
+   </script>
+   
 </body>
 </html>
