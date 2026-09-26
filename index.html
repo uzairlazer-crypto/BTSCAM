@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BTS MOMENT CAM ★ v2.006</title>
+<meta name="description" content="A fictional BTS digital camera from an alternate 2006. Point it at a moment and it finds the song." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   BTS MOMENT CAM — 8-bit / Y2K / 2006 digicam
+   ============================================================ */
+:root{
+  --lav:#c9b6ff; --lav-2:#a98cf5; --lav-deep:#6b4fc4;
+  --pink:#ff8ad4; --pink-hot:#ff4fb8; --pink-deep:#c2177f;
+  --blue:#9fdcff; --blue-deep:#3f8fd6;
+  --yellow:#ffe66d; --lime:#b8ff5c;
+  --ink:#2a1e4a; --ink-2:#4a3a7a;
+  --chrome-hi:#ffffff; --chrome:#d9dbe3; --chrome-mid:#b4b7c3; --chrome-lo:#7d8090; --chrome-shadow:#4b4d58;
+  --lcd:#0b1a12; --lcd-glow:#b5ffcf;
+  --px:4px;
+  --font-px:'Press Start 2P', 'Courier New', monospace;
+  --font-lcd:'VT323', 'Courier New', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font-px);
+  color:var(--ink);
+  background:var(--lav);
+  overflow-x:hidden;
+  min-height:100vh;
+  image-rendering:pixelated;
+  -webkit-font-smoothing:none;
+}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+
+/* ---------- DESKTOP BACKGROUND ---------- */
+.desktop{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  background-color:#bfa8ff;
+  background-image:
+    linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px),
+    radial-gradient(circle at 20% 15%, #ffd0f0 0, transparent 40%),
+    radial-gradient(circle at 85% 80%, #a8e2ff 0, transparent 45%),
+    linear-gradient(180deg,#c9b6ff 0%, #b79cff 100%);
+  background-size:16px 16px,16px 16px,100% 100%,100% 100%,100% 100%;
+}
+.desktop::after{ /* CRT scanlines */
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.09) 0 2px, transparent 2px 4px);
+  mix-blend-mode:multiply;
+}
+.desktop .vignette{position:absolute;inset:0;pointer-events:none;z-index:49;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(60,30,120,.45) 100%);}
+
+/* Pixel drawing helper: each element is a 1px "pixel" scaled via box-shadow */
+.pix{position:absolute;width:var(--px);height:var(--px);}
+
+/* big pixel 7 — 7 wide x 9 tall grid, purple */
+.seven{
+  position:absolute;right:4%;top:6%;width:calc(var(--px)*7*3);height:calc(var(--px)*9*3);
+  --u:calc(var(--px)*3);
+  opacity:.75;
+  filter:drop-shadow(var(--u) var(--u) 0 rgba(60,30,120,.35));
+}
+.seven i{position:absolute;width:var(--u);height:var(--u);background:#7d5cff}
+.seven i:nth-child(1){left:0;top:0;box-shadow:var(--u) 0 0 #7d5cff,calc(var(--u)*2) 0 0 #7d5cff,calc(var(--u)*3) 0 0 #7d5cff,calc(var(--u)*4) 0 0 #7d5cff,calc(var(--u)*5) 0 0 #7d5cff,calc(var(--u)*6) 0 0 #7d5cff,
+  0 var(--u) 0 #7d5cff,calc(var(--u)*6) var(--u) 0 #7d5cff,
+  calc(var(--u)*6) calc(var(--u)*2) 0 #7d5cff,
+  calc(var(--u)*5) calc(var(--u)*3) 0 #7d5cff,
+  calc(var(--u)*4) calc(var(--u)*4) 0 #7d5cff,
+  calc(var(--u)*3) calc(var(--u)*5) 0 #7d5cff,
+  calc(var(--u)*3) calc(var(--u)*6) 0 #7d5cff,
+  calc(var(--u)*3) calc(var(--u)*7) 0 #7d5cff,
+  calc(var(--u)*3) calc(var(--u)*8) 0 #7d5cff;}
+.seven i:nth-child(2){left:0;top:0;background:#fff;opacity:.6;box-shadow:var(--u) 0 0 #fff,calc(var(--u)*2) 0 0 #fff;}
+
+/* pixel heart (7x6) */
+.heart{position:absolute;width:var(--px);height:var(--px);--c:#ff4fb8;--u:var(--px);
+  background:transparent;
+  box-shadow:
+   var(--u) 0 0 var(--c), calc(var(--u)*2) 0 0 var(--c), calc(var(--u)*4) 0 0 var(--c), calc(var(--u)*5) 0 0 var(--c),
+   0 var(--u) 0 var(--c), var(--u) var(--u) 0 #fff, calc(var(--u)*2) var(--u) 0 var(--c), calc(var(--u)*3) var(--u) 0 var(--c), calc(var(--u)*4) var(--u) 0 var(--c), calc(var(--u)*5) var(--u) 0 var(--c), calc(var(--u)*6) var(--u) 0 var(--c),
+   0 calc(var(--u)*2) 0 var(--c), var(--u) calc(var(--u)*2) 0 var(--c), calc(var(--u)*2) calc(var(--u)*2) 0 var(--c), calc(var(--u)*3) calc(var(--u)*2) 0 var(--c), calc(var(--u)*4) calc(var(--u)*2) 0 var(--c), calc(var(--u)*5) calc(var(--u)*2) 0 var(--c), calc(var(--u)*6) calc(var(--u)*2) 0 var(--c),
+   var(--u) calc(var(--u)*3) 0 var(--c), calc(var(--u)*2) calc(var(--u)*3) 0 var(--c), calc(var(--u)*3) calc(var(--u)*3) 0 var(--c), calc(var(--u)*4) calc(var(--u)*3) 0 var(--c), calc(var(--u)*5) calc(var(--u)*3) 0 var(--c),
+   calc(var(--u)*2) calc(var(--u)*4) 0 var(--c), calc(var(--u)*3) calc(var(--u)*4) 0 var(--c), calc(var(--u)*4) calc(var(--u)*4) 0 var(--c),
+   calc(var(--u)*3) calc(var(--u)*5) 0 var(--c);
+  animation:bob 3s ease-in-out infinite;
+}
+/* pixel star (5x5) */
+.star{position:absolute;width:var(--px);height:var(--px);--c:#ffe66d;--u:var(--px);background:transparent;
+  box-shadow:
+    calc(var(--u)*2) 0 0 var(--c),
+    calc(var(--u)*2) var(--u) 0 var(--c),
+    0 calc(var(--u)*2) 0 var(--c), var(--u) calc(var(--u)*2) 0 var(--c), calc(var(--u)*2) calc(var(--u)*2) 0 #fff, calc(var(--u)*3) calc(var(--u)*2) 0 var(--c), calc(var(--u)*4) calc(var(--u)*2) 0 var(--c),
+    calc(var(--u)*2) calc(var(--u)*3) 0 var(--c),
+    calc(var(--u)*2) calc(var(--u)*4) 0 var(--c);
+  animation:twinkle 2.2s steps(2) infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* fake windows */
+.win{position:absolute;background:#e8e4f7;border:3px solid;border-color:#fff #5a4a8a #5a4a8a #fff;
+  box-shadow:4px 4px 0 rgba(40,20,90,.35);font-size:7px;line-height:1.6;color:var(--ink);min-width:120px}
+.win .tb{background:linear-gradient(90deg,#6b4fc4,#a98cf5);color:#fff;padding:3px 5px;display:flex;justify-content:space-between;align-items:center;font-size:7px;letter-spacing:0}
+.win .tb span:last-child{background:#e8e4f7;color:#000;padding:0 3px;border:1px solid;border-color:#fff #333 #333 #fff}
+.win .bd{padding:6px}
+.win .bar{height:8px;background:#fff;border:2px solid;border-color:#5a4a8a #fff #fff #5a4a8a;margin-top:4px;overflow:hidden}
+.win .bar i{display:block;height:100%;width:62%;background:repeating-linear-gradient(90deg,#3f8fd6 0 6px,transparent 6px 8px)}
+
+/* CD */
+.cd{position:absolute;width:110px;height:110px;border-radius:50%;
+  background:conic-gradient(from 0deg,#fff,#ffd0f0,#b8ff5c,#9fdcff,#ffe66d,#ff8ad4,#c9b6ff,#fff);
+  box-shadow:inset 0 0 0 6px #d9dbe3,inset 0 0 0 8px #7d8090,5px 6px 0 rgba(40,20,90,.35);
+  animation:spin 14s linear infinite}
+.cd::after{content:"";position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px;border-radius:50%;background:#bfa8ff;box-shadow:inset 0 0 0 4px #e8e4f7,inset 0 0 0 6px #7d8090}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* memory card */
+.memcard{position:absolute;width:64px;height:84px;background:#3a3a44;border:3px solid;border-color:#6a6a78 #1a1a20 #1a1a20 #6a6a78;
+  clip-path:polygon(0 0,80% 0,100% 15%,100% 100%,0 100%);box-shadow:4px 4px 0 rgba(40,20,90,.35)}
+.memcard::before{content:"MEMORY CARD";position:absolute;left:5px;top:22px;right:5px;background:#ffe66d;color:#2a1e4a;font-size:5px;padding:4px 2px;text-align:center;line-height:1.4}
+.memcard::after{content:"128MB";position:absolute;left:5px;bottom:8px;color:#b8ff5c;font-size:6px}
+
+/* bg cassette */
+.bgtape{position:absolute;width:150px;height:96px;background:#ff8ad4;border:3px solid;border-color:#ffd0f0 #c2177f #c2177f #ffd0f0;box-shadow:5px 5px 0 rgba(40,20,90,.35);opacity:.9}
+.bgtape::before{content:"";position:absolute;left:14px;right:14px;top:14px;height:40px;background:#fff7e0;border:2px solid #c2177f}
+.bgtape::after{content:"";position:absolute;left:38px;top:24px;width:20px;height:20px;border-radius:50%;background:#3a3a44;box-shadow:54px 0 0 #3a3a44,inset 0 0 0 5px #b4b7c3}
+
+.label{position:absolute;background:#2a1e4a;color:#b8ff5c;font-size:7px;padding:4px 6px;border:2px solid #b8ff5c;box-shadow:3px 3px 0 #6b4fc4;white-space:nowrap}
+.label.pink{background:#ff8ad4;color:#2a1e4a;border-color:#fff;box-shadow:3px 3px 0 #c2177f}
+.label.blink{animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.sticker{position:absolute;padding:6px 8px;background:#ffe66d;color:#2a1e4a;font-size:7px;transform:rotate(-8deg);
+  border:3px solid #fff;box-shadow:3px 3px 0 rgba(40,20,90,.35)}
+
+/* ---------- LAYOUT ---------- */
+.stage{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px 12px 64px}
+.title{color:#fff;text-shadow:3px 3px 0 var(--lav-deep),6px 6px 0 rgba(40,20,90,.3);font-size:clamp(14px,3.4vw,26px);text-align:center;line-height:1.5}
+.title small{display:block;font-size:8px;color:var(--yellow);margin-top:8px;text-shadow:2px 2px 0 var(--ink)}
+.title .tstar{display:inline-block;width:20px;height:20px;vertical-align:middle;position:relative;margin:0 6px}
+.title .tstar::before{content:"";position:absolute;left:0;top:0;width:4px;height:4px;--c:#ffe66d;--u:4px;
+  box-shadow:calc(var(--u)*2) 0 0 var(--c),calc(var(--u)*2) var(--u) 0 var(--c),0 calc(var(--u)*2) 0 var(--c),var(--u) calc(var(--u)*2) 0 var(--c),calc(var(--u)*2) calc(var(--u)*2) 0 #fff,calc(var(--u)*3) calc(var(--u)*2) 0 var(--c),calc(var(--u)*4) calc(var(--u)*2) 0 var(--c),calc(var(--u)*2) calc(var(--u)*3) 0 var(--c),calc(var(--u)*2) calc(var(--u)*4) 0 var(--c);
+  animation:twinkle 1.6s steps(2) infinite}
+
+/* ---------- CAMERA BODY ---------- */
+.camera{
+  position:relative;width:min(560px,100%);
+  padding:22px 52px 26px 22px;
+  border-radius:28px 28px 34px 34px / 30px 30px 40px 40px;
+  background:
+    linear-gradient(180deg,var(--chrome-hi) 0%,var(--chrome) 12%,var(--chrome-mid) 60%,var(--chrome-lo) 100%);
+  box-shadow:
+    inset 0 3px 0 #fff, inset 0 -4px 0 var(--chrome-shadow), inset 3px 0 0 rgba(255,255,255,.7), inset -3px 0 0 rgba(0,0,0,.25),
+    0 22px 0 -6px var(--chrome-shadow), 0 34px 40px rgba(40,20,90,.55);
+  font-size:7px;color:#4b4d58;letter-spacing:0;
+}
+/* seam line running around the body */
+.camera::before{content:"";position:absolute;inset:8px;border-radius:22px;pointer-events:none;
+  border:1px solid rgba(0,0,0,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+/* grip texture on right */
+.camera::after{content:"";position:absolute;right:16px;top:70px;bottom:70px;width:24px;border-radius:12px;pointer-events:none;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,.18) 0 3px,transparent 3px 7px);
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.4)}
+
+.screw{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#eef,#8d90a0 60%,#4b4d58);box-shadow:0 1px 0 #fff,inset 0 0 0 1px rgba(0,0,0,.35)}
+.screw::after{content:"";position:absolute;left:50%;top:1.5px;bottom:1.5px;width:1.5px;margin-left:-.75px;background:#2b2d36;box-shadow:0 0 0 0}
+.screw::before{content:"";position:absolute;top:50%;left:1.5px;right:1.5px;height:1.5px;margin-top:-.75px;background:#2b2d36}
+.camera .screw.tl{left:12px;top:12px}.camera .screw.tr{right:12px;top:12px}.camera .screw.bl{left:12px;bottom:12px}.camera .screw.br{right:12px;bottom:12px}
+
+.speaker{position:absolute;left:30px;top:26px;width:44px;height:18px;
+  background-image:radial-gradient(circle,#3a3a44 1.3px,transparent 1.6px);background-size:6px 6px;
+  filter:drop-shadow(0 1px 0 #fff)}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:0 6px 14px 84px}
+.brand{font-size:9px;color:#2a1e4a;text-shadow:0 1px 0 #fff;display:flex;align-items:center;gap:8px}
+.brand b{color:var(--pink-deep)}
+.brand .mp{background:#2a1e4a;color:var(--yellow);padding:3px 5px;border-radius:2px;font-size:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 0 #fff}
+.leds{display:flex;gap:10px;align-items:center;font-size:6px}
+.led{width:8px;height:8px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px;border:1px solid rgba(0,0,0,.4);box-shadow:inset 0 1px 1px rgba(255,255,255,.6)}
+.led.green{background:#3bff7a;box-shadow:0 0 6px #3bff7a,inset 0 1px 1px #fff}
+.led.red{background:#ff2e4d;box-shadow:0 0 6px #ff2e4d,inset 0 1px 1px #fff;animation:blink .9s steps(2) infinite}
+.led.off{background:#5a2233;box-shadow:none;animation:none}
+
+/* ---------- LCD ---------- */
+.lcd-bezel{
+  position:relative;background:linear-gradient(180deg,#1d1f28,#2a2c38);padding:14px;border-radius:8px;
+  box-shadow:inset 0 2px 0 rgba(0,0,0,.8), inset 0 -1px 0 rgba(255,255,255,.15), 0 1px 0 #fff, 0 0 0 2px #8d90a0;
+}
+.lcd-bezel .screw{width:6px;height:6px}
+.lcd-bezel .screw.tl{left:4px;top:4px}.lcd-bezel .screw.tr{right:4px;top:4px}.lcd-bezel .screw.bl{left:4px;bottom:4px}.lcd-bezel .screw.br{right:4px;bottom:4px}
+.lcd-label{position:absolute;right:16px;bottom:2px;font-size:5px;color:#8d90a0;letter-spacing:1px}
+
+.lcd{
+  position:relative;aspect-ratio:4/3;background:var(--lcd);overflow:hidden;border-radius:2px;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.9), inset 0 0 0 1px #000;
+  font-family:var(--font-lcd);color:var(--lcd-glow);
+}
+.lcd video,.lcd canvas.frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .25s steps(4)}
+.lcd video.mirror{transform:scaleX(-1)}
+.lcd .vidwrap{position:absolute;inset:0;overflow:hidden;filter:saturate(1.25) contrast(1.08) brightness(1.02);}
+.lcd .vidwrap::after{ /* low-res digicam texture */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+   repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px),
+   repeating-linear-gradient(90deg, rgba(255,0,120,.05) 0 1px, rgba(0,255,150,.05) 1px 2px, rgba(0,120,255,.05) 2px 3px);
+}
+.lcd .glare{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,transparent 28%,transparent 70%,rgba(255,255,255,.05) 100%)}
+
+.hud{position:absolute;inset:0;pointer-events:none;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between;font-size:clamp(12px,3vw,17px);text-shadow:1px 1px 0 #000,0 0 6px rgba(181,255,207,.6);line-height:1}
+.hud .row{display:flex;justify-content:space-between;align-items:center}
+.hud .rec{color:#ff5c7a;display:flex;align-items:center;gap:6px}
+.hud .rec i{width:9px;height:9px;background:#ff2e4d;border-radius:50%;display:inline-block;animation:blink 1s steps(2) infinite;box-shadow:0 0 6px #ff2e4d}
+.hud .batt{display:inline-flex;align-items:center;gap:3px;border:2px solid var(--lcd-glow);padding:2px;height:14px;position:relative}
+.hud .batt::after{content:"";position:absolute;right:-5px;top:3px;width:3px;height:6px;background:var(--lcd-glow)}
+.hud .batt i{width:4px;height:6px;background:var(--lcd-glow);display:block}
+.hud .batt i.dim{opacity:.25}
+.focus{position:absolute;left:50%;top:50%;width:34%;aspect-ratio:1/1;transform:translate(-50%,-50%);pointer-events:none}
+.focus::before,.focus::after,.focus i::before,.focus i::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--lcd-glow);filter:drop-shadow(0 0 3px rgba(181,255,207,.8))}
+.focus::before{left:0;top:0;border-right:0;border-bottom:0}
+.focus::after{right:0;top:0;border-left:0;border-bottom:0}
+.focus i::before{left:0;bottom:0;border-right:0;border-top:0}
+.focus i::after{right:0;bottom:0;border-left:0;border-top:0}
+.focus.locked::before,.focus.locked::after,.focus.locked i::before,.focus.locked i::after{border-color:#ffe66d}
+.hud .datestamp{color:#ffb545;font-family:var(--font-lcd);text-shadow:1px 1px 0 #000,0 0 6px rgba(255,160,40,.6)}
+.hud .zoomtag{font-size:clamp(11px,2.6vw,14px);}
+.hud .mode{background:rgba(0,0,0,.5);padding:2px 5px;border:1px solid var(--lcd-glow);font-size:clamp(10px,2.4vw,13px)}
+
+.nosignal{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;
+  background:repeating-linear-gradient(0deg,#111 0 2px,#1f2b22 2px 4px);font-size:clamp(13px,3vw,20px)}
+.nosignal.noise{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.5 0 0 0 0 0.25 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:120px 120px}
+.nosignal button{margin-top:6px;font-family:var(--font-px);font-size:8px;background:var(--lcd-glow);color:#0b1a12;padding:8px 12px;box-shadow:3px 3px 0 #052b16}
+.nosignal button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #052b16}
+.hidden{display:none !important}
+
+/* developing overlay */
+.develop{position:absolute;inset:0;background:#05110b;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;padding:20px;font-size:clamp(14px,3.4vw,22px);text-align:center}
+.develop .stagetxt{min-height:1.2em;letter-spacing:1px}
+.develop .stagetxt::after{content:"";animation:dots 1s steps(3) infinite}
+@keyframes dots{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
+.develop .prog{width:70%;height:14px;border:2px solid var(--lcd-glow);padding:2px;display:flex;gap:2px}
+.develop .prog i{flex:1;background:var(--lcd-glow);opacity:.15}
+.develop .prog i.on{opacity:1}
+.develop .thumb{width:38%;aspect-ratio:4/3;border:2px solid var(--lcd-glow);background:#000;position:relative;overflow:hidden}
+.develop .thumb img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(2) brightness(.6);animation:develop 4.5s steps(6) forwards}
+@keyframes develop{0%{filter:grayscale(1) contrast(4) brightness(.2);opacity:.2}50%{filter:grayscale(.6) contrast(1.6) brightness(.7)}100%{filter:none;opacity:1}}
+.develop .tiny{font-size:clamp(10px,2.2vw,13px);opacity:.7}
+
+/* flash */
+.flashfx{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:200}
+.flashfx.go{animation:flash .55s steps(5) forwards}
+@keyframes flash{0%{opacity:1}100%{opacity:0}}
+.camera.shake{animation:shake .25s steps(3)}
+@keyframes shake{0%{transform:translate(0,0)}33%{transform:translate(-2px,2px)}66%{transform:translate(2px,-1px)}100%{transform:none}}
+
+/* ---------- CONTROLS DECK ---------- */
+.deck{position:relative;margin-top:16px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:12px 10px 4px}
+.deck::before{ /* recessed control plate */
+  content:"";position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(180deg,#c3c6d0,#aeb1bd);
+  box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 -1px 0 rgba(255,255,255,.6), 0 1px 0 #fff;
+}
+.deck > *{position:relative}
+.ctl{display:flex;flex-direction:column;align-items:center;gap:6px}
+.ctl .lbl{font-size:6px;color:#2a2c38;text-shadow:0 1px 0 rgba(255,255,255,.7);letter-spacing:1px}
+.ctl .lbl.lo{color:#4b4d58}
+.left,.right{display:flex;justify-content:space-around;align-items:center;gap:10px}
+
+/* generic physical button */
+.pbtn{
+  position:relative;border-radius:50%;
+  transition:transform .06s steps(2), box-shadow .06s steps(2);
+  outline-offset:4px;
+}
+.pbtn:focus-visible{outline:2px dashed var(--pink-hot)}
+/* FLIP: recessed rubber dome */
+.flip{width:46px;height:46px;background:radial-gradient(circle at 40% 35%,#5b5e6c,#2a2c38 70%);
+  box-shadow:inset 0 -2px 3px rgba(0,0,0,.7), inset 0 2px 2px rgba(255,255,255,.2), 0 0 0 3px #8d90a0, 0 0 0 4px #4b4d58, 0 1px 0 4px #fff}
+.pbtn svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;pointer-events:none;shape-rendering:crispEdges}
+.flip svg{fill:#e0e2ee;filter:drop-shadow(0 -1px 0 #000)}
+.flip:active,.flip.down{transform:translateY(2px);box-shadow:inset 0 3px 4px rgba(0,0,0,.9), 0 0 0 3px #8d90a0, 0 0 0 4px #4b4d58, 0 1px 0 4px #fff}
+/* FLASH: chunky yellow */
+.flash{width:46px;height:46px;background:radial-gradient(circle at 35% 30%,#fff6b3,#ffe66d 45%,#d9b800 100%);
+  box-shadow:inset 0 -4px 0 #a88a00, inset 0 2px 0 #fffbe0, 0 4px 0 #6b5a00, 0 5px 0 rgba(0,0,0,.4), 0 0 0 3px #8d90a0, 0 4px 0 3px #4b4d58}
+.flash svg{fill:#5a4a00;filter:drop-shadow(0 1px 0 #fff)}
+.flash:active,.flash.down{transform:translateY(4px);box-shadow:inset 0 -1px 0 #a88a00, inset 0 2px 0 #fffbe0, 0 0 0 #6b5a00, 0 1px 0 rgba(0,0,0,.4), 0 0 0 3px #8d90a0, 0 0 0 3px #4b4d58}
+.flash.on{filter:brightness(1.15) saturate(1.2)}
+.flash.on::after{content:"";position:absolute;right:-2px;top:-2px;width:10px;height:10px;border-radius:50%;background:#3bff7a;box-shadow:0 0 6px #3bff7a;border:1px solid #063}
+
+/* SHUTTER: big pink raised, on a chrome collar */
+.shutter-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.collar{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:conic-gradient(from 200deg,#fff,#b4b7c3,#fff,#7d8090,#fff,#b4b7c3,#fff);
+  box-shadow:inset 0 0 0 4px #d9dbe3, inset 0 0 0 5px #4b4d58, 0 2px 0 #fff, 0 -1px 0 rgba(0,0,0,.4), 0 6px 10px rgba(0,0,0,.35)}
+.shutter{
+  width:96px;height:96px;border-radius:50%;
+  background:radial-gradient(circle at 38% 30%,#ffe3f5 0%,#ff9ddb 30%,#ff4fb8 70%,#d61e8f 100%);
+  box-shadow:
+    inset 0 -6px 0 #b0166f, inset 0 3px 0 rgba(255,255,255,.75),
+    0 8px 0 #7a0c4c, 0 9px 0 rgba(0,0,0,.5), 0 14px 12px rgba(0,0,0,.35);
+  font-family:var(--font-px);font-size:7px;color:#5c0838;text-shadow:0 1px 0 #ffd0f0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;line-height:1.4;
+}
+.shutter b{display:block;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:1px 1px 0 #b0166f,inset 0 -2px 0 #ffd0f0;margin-bottom:2px}
+.shutter:disabled{filter:saturate(.7) brightness(.92)}
+.shutter::before{ /* glossy highlight */
+  content:"";position:absolute;left:18%;top:10%;width:36%;height:22%;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(1px)}
+.shutter:active,.shutter.down{
+  transform:translateY(8px);
+  box-shadow:inset 0 -2px 0 #b0166f, inset 0 4px 4px rgba(0,0,0,.35), 0 0 0 #7a0c4c, 0 1px 0 rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.35);
+  background:radial-gradient(circle at 38% 30%,#ffc6ea 0%,#ff7fce 30%,#e43ba5 70%,#c2177f 100%);
+}
+.shutter:disabled{cursor:not-allowed}
+
+/* ZOOM rocker W/T */
+.rocker{display:flex;flex-direction:column;width:38px;border-radius:8px;overflow:hidden;
+  box-shadow:0 0 0 3px #8d90a0, 0 0 0 4px #4b4d58, 0 1px 0 4px #fff, 0 3px 0 4px #4b4d58}
+.rocker button{height:32px;background:linear-gradient(180deg,#e9ebf2,#b4b7c3);font-family:var(--font-px);font-size:8px;color:#2a2c38;position:relative;
+  box-shadow:inset 0 2px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.3);transition:all .06s steps(2)}
+.rocker button + button{border-top:1px solid #4b4d58}
+.rocker button:active,.rocker button.down{background:linear-gradient(180deg,#9c9fad,#c3c6d0);box-shadow:inset 0 2px 3px rgba(0,0,0,.5)}
+.rocker button::after{content:"";position:absolute;left:50%;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;margin-left:-4px}
+.rocker button.w::after{bottom:3px;border-top:4px solid #4b4d58}
+.rocker button.t::after{top:3px;border-bottom:4px solid #4b4d58}
+
+/* status strip under deck */
+.strip{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding:0 8px;font-size:6px;color:#3a3c48;text-shadow:0 1px 0 #fff}
+.strip .plate{background:#2a1e4a;color:#c9b6ff;padding:4px 8px;border-radius:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 0 #fff;letter-spacing:1px}
+.strip .plate em{color:var(--lime);font-style:normal}
+.sticker.oncam{position:static;transform:rotate(-4deg);font-size:6px;padding:4px 6px;background:var(--lime)}
+
+/* ---------- RESULT ---------- */
+.result{width:min(720px,100%);display:none;position:relative;flex-direction:column;align-items:center;gap:22px}
+.result.show{display:flex}
+.result-title{font-size:clamp(9px,2.4vw,13px);color:#fff;text-shadow:2px 2px 0 var(--lav-deep);text-align:center;line-height:1.8;padding:8px 14px;background:rgba(42,30,74,.6);border:3px solid #fff;box-shadow:4px 4px 0 var(--lav-deep)}
+.scene{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:32px;width:100%}
+
+.polaroid{
+  position:relative;width:min(280px,80vw);background:#fbf8f1;padding:12px 12px 48px;
+  box-shadow:0 1px 0 #fff inset, 0 0 0 1px #d8d2c4, 8px 12px 0 rgba(40,20,90,.35), 0 20px 30px rgba(40,20,90,.3);
+  transform:rotate(-4deg) translateY(30px);opacity:0;transition:transform .8s steps(8), opacity .6s steps(4);
+}
+.polaroid.in{transform:rotate(-4deg) translateY(0);opacity:1}
+.polaroid .photo{aspect-ratio:1/1;background:#111;overflow:hidden;position:relative;box-shadow:inset 0 0 0 2px #222}
+.polaroid .photo img{width:100%;height:100%;object-fit:cover;filter:contrast(1.05) saturate(1.15) sepia(.1);display:block}
+.polaroid .photo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px),linear-gradient(160deg,rgba(255,255,255,.18),transparent 40%)}
+.polaroid .cap{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-family:var(--font-lcd);font-size:20px;color:#3a2a6a;transform:rotate(-1deg)}
+.polaroid .cap small{display:block;font-family:var(--font-px);font-size:7px;color:#b0166f;margin-top:4px}
+.polaroid .tape{position:absolute;left:50%;top:-10px;width:70px;height:20px;margin-left:-35px;background:rgba(255,230,109,.75);transform:rotate(3deg);box-shadow:0 1px 0 rgba(0,0,0,.1)}
+.polaroid .stick{position:absolute;right:-10px;top:-8px;width:36px;height:36px;--u:4px}
+.polaroid .stick .heart{left:2px;top:6px}
+
+/* cassette */
+.cassette{
+  position:relative;width:min(300px,86vw);aspect-ratio:300/190;
+  background:linear-gradient(180deg,#8d6bff,#6b4fc4 60%,#563aa8);
+  border-radius:8px;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.35), inset 0 -4px 0 rgba(0,0,0,.4), inset 3px 0 0 rgba(255,255,255,.15), inset -3px 0 0 rgba(0,0,0,.25),
+    0 10px 0 #2d1d63, 10px 16px 0 rgba(40,20,90,.35), 0 26px 30px rgba(40,20,90,.35);
+  transform:translateX(140vw) rotate(12deg);
+  transition:transform 1.1s cubic-bezier(.2,.9,.2,1.05);
+  font-size:6px;color:#2a1e4a;
+}
+.cassette.in{transform:translateX(0) rotate(3deg)}
+.cassette .screw{width:8px;height:8px}
+.cassette .screw.tl{left:7px;top:7px}.cassette .screw.tr{right:7px;top:7px}.cassette .screw.bl{left:7px;bottom:7px}.cassette .screw.br{right:7px;bottom:7px}
+.cassette .screw.cm{left:50%;bottom:7px;margin-left:-4px}
+.clabel{
+  position:absolute;left:7%;right:7%;top:8%;height:58%;
+  background:
+    linear-gradient(180deg,#fff7e0 0 62%, #ff8ad4 62% 80%, #9fdcff 80% 100%);
+  border:2px solid #2a1e4a;border-radius:3px;
+  box-shadow:inset 0 0 0 2px #fff, 0 2px 0 rgba(0,0,0,.25);
+}
+.clabel .side{position:absolute;left:8px;top:6px;font-size:7px;background:#2a1e4a;color:#ffe66d;padding:2px 4px}
+.clabel .txt{position:absolute;left:0;right:0;top:8px;text-align:center;font-family:var(--font-lcd);font-size:clamp(14px,4vw,20px);color:#2a1e4a;line-height:1}
+.clabel .txt b{display:block;font-family:var(--font-px);font-size:clamp(9px,2.6vw,12px);color:#b0166f;margin-top:5px;text-shadow:1px 1px 0 #ffd0f0}
+.clabel .txt small{display:block;font-family:var(--font-px);font-size:6px;color:#4a3a7a;margin-top:6px}
+.clabel .lines{position:absolute;left:8px;right:8px;bottom:22%;height:1px;background:#2a1e4a;opacity:.3;box-shadow:0 -6px 0 #2a1e4a}
+.twindow{
+  position:absolute;left:22%;right:22%;top:36%;height:30%;
+  background:linear-gradient(180deg,#1a1520,#2a2433);border:3px solid #2a1e4a;border-radius:4px;
+  box-shadow:inset 0 0 10px #000, 0 1px 0 rgba(255,255,255,.3);display:flex;justify-content:space-between;align-items:center;padding:0 10%;
+}
+.twindow::after{content:"";position:absolute;left:0;right:0;top:0;height:35%;background:linear-gradient(180deg,rgba(255,255,255,.18),transparent);pointer-events:none}
+.reel{
+  width:34%;aspect-ratio:1/1;border-radius:50%;position:relative;
+  background:radial-gradient(circle,#0a0810 0 14%,#e8e4f7 14% 22%,#0a0810 22% 30%, #3a3a44 30% 100%);
+  box-shadow:inset 0 0 0 2px #6a6a78, 0 0 0 3px #1a1520;
+}
+.reel::before{content:"";position:absolute;inset:26%;border-radius:50%;background:
+  repeating-conic-gradient(#e8e4f7 0 20deg, transparent 20deg 60deg);
+  -webkit-mask:radial-gradient(circle,transparent 40%,#000 41%,#000 100%);mask:radial-gradient(circle,transparent 40%,#000 41%,#000 100%)}
+.reel.l{box-shadow:inset 0 0 0 2px #6a6a78, 0 0 0 3px #1a1520, 0 0 0 9px #241c2d} /* more tape on left */
+.spinning .reel{animation:spin 1.6s linear infinite}
+.spinning .reel.r{animation-duration:1.15s}
+.tapeline{position:absolute;left:0;right:0;bottom:22%;height:2px;background:#1a1520;opacity:.6}
+.cbottom{position:absolute;left:0;right:0;bottom:0;height:22%;display:flex;justify-content:center;align-items:flex-end;gap:14%;padding-bottom:5%}
+.hole{width:10px;height:14px;background:#1a1520;border-radius:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.hole.big{width:16px;height:16px;border-radius:50%}
+.cassette .abtag{position:absolute;right:9%;top:9%;font-size:6px;background:#ffe66d;color:#2a1e4a;padding:2px 3px;border:1px solid #2a1e4a}
+
+.playbtn{
+  font-family:var(--font-px);font-size:9px;color:#2a1e4a;background:linear-gradient(180deg,#d4ff8f,#b8ff5c);
+  padding:12px 18px;border:3px solid #2a1e4a;box-shadow:inset 0 2px 0 #fff, 5px 5px 0 #2a1e4a;transition:all .06s steps(2)
+}
+.playbtn:active{transform:translate(4px,4px);box-shadow:inset 0 2px 0 #fff, 1px 1px 0 #2a1e4a}
+.playbtn.playing{background:linear-gradient(180deg,#ffd0f0,#ff8ad4)}
+.nowplay{font-family:var(--font-lcd);font-size:22px;color:#fff;text-shadow:2px 2px 0 var(--lav-deep);text-align:center;min-height:1.2em;display:flex;gap:4px;align-items:flex-end;justify-content:center}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:16px;margin-right:6px}
+.eq i{width:4px;background:var(--lime);height:4px}
+.playing-eq .eq i{animation:eq .5s steps(3) infinite alternate}
+.eq i:nth-child(2){animation-delay:.1s}.eq i:nth-child(3){animation-delay:.2s}.eq i:nth-child(4){animation-delay:.3s}
+@keyframes eq{to{height:16px}}
+.again{font-family:var(--font-px);font-size:7px;color:#fff;background:var(--ink);padding:8px 12px;border:2px solid #fff;box-shadow:3px 3px 0 var(--lav-deep)}
+.again:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--lav-deep)}
+
+.footer{position:relative;z-index:1;text-align:center;font-size:6px;color:#fff;text-shadow:1px 1px 0 var(--ink);padding-bottom:20px;line-height:2}
+
+@media (max-width:480px){
+  .camera{padding:16px 14px 20px}
+  .camera::after{display:none}
+  .brand .mp{display:none}
+  .collar{width:100px;height:100px}.shutter{width:80px;height:80px}
+  .flip,.flash{width:40px;height:40px}
+  .topbar{padding-left:70px}
+  .seven{display:none}
+  .win.w2{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ DESKTOP BACKGROUND ============ -->
+<div class="desktop" aria-hidden="true">
+  <div class="seven"><i></i><i></i></div>
+
+  <span class="heart" style="left:6%;top:12%;--u:5px"></span>
+  <span class="heart" style="left:88%;top:52%;--u:4px;--c:#ff8ad4;animation-delay:.6s"></span>
+  <span class="heart" style="left:14%;top:78%;--u:3px;--c:#ff4fb8;animation-delay:1.2s"></span>
+  <span class="star" style="left:30%;top:6%;--u:4px"></span>
+  <span class="star" style="left:70%;top:20%;--u:3px;--c:#fff;animation-delay:.4s"></span>
+  <span class="star" style="left:92%;top:36%;--u:5px;animation-delay:.9s"></span>
+  <span class="star" style="left:8%;top:50%;--u:3px;--c:#b8ff5c;animation-delay:.2s"></span>
+  <span class="star" style="left:60%;top:90%;--u:4px;--c:#fff;animation-delay:1.1s"></span>
+  <span class="star" style="left:22%;top:34%;--u:3px;animation-delay:.7s"></span>
+
+  <div class="win" style="left:3%;top:22%;width:150px">
+    <div class="tb"><span>ARMY_DESKTOP.EXE</span><span>x</span></div>
+    <div class="bd">LOADING MEMORIES<div class="bar"><i></i></div><div style="margin-top:6px;color:#6b4fc4">62% ... PLEASE WAIT</div></div>
+  </div>
+  <div class="win w2" style="right:2%;bottom:14%;width:160px">
+    <div class="tb"><span>BTS_FANSITE_2006</span><span>x</span></div>
+    <div class="bd">&gt; welcome to my page ♡<br>&gt; visitors: 000724<br>&gt; best viewed 800x600</div>
+  </div>
+  <div class="win" style="left:6%;bottom:6%;width:140px">
+    <div class="tb"><span>DCIM</span><span>_</span></div>
+    <div class="bd">IMG_0007.JPG<br>IMG_0013.JPG<br>IMG_0613.JPG</div>
+  </div>
+
+  <div class="cd" style="left:-30px;top:58%"></div>
+  <div class="cd" style="right:-40px;top:-30px;width:140px;height:140px;animation-duration:22s"></div>
+  <div class="memcard" style="right:8%;top:60%;transform:rotate(9deg)"></div>
+  <div class="bgtape" style="left:14%;top:60%;transform:rotate(-7deg)"></div>
+
+  <div class="label" style="left:5%;top:8%">BTS MOMENT</div>
+  <div class="label pink" style="right:6%;top:30%">MEMORY CARD OK</div>
+  <div class="label blink" style="left:40%;bottom:6%">PRESS START</div>
+  <div class="label" style="right:22%;bottom:5%">7 = ∞</div>
+  <div class="sticker" style="left:24%;top:16%">BORAHAE ♡</div>
+  <div class="sticker" style="right:14%;top:8%;background:#9fdcff;transform:rotate(6deg)">EST. 2013</div>
+  <div class="vignette"></div>
+</div>
+
+<div class="flashfx" id="flashfx"></div>
+
+<!-- ============ STAGE ============ -->
+<main class="stage">
+  <h1 class="title"><span class="tstar"></span> BTS MOMENT CAM <span class="tstar"></span><small>ALT. 2006 EDITION - POINT IT AT A MOMENT</small></h1>
+
+  <!-- ============ CAMERA ============ -->
+  <section class="camera" id="camera" aria-label="BTS Moment Cam digital camera">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="speaker"></div>
+
+    <div class="topbar">
+      <div class="brand"><b>BTS</b> MOMENT CAM <span class="mp">7.0 MEGA PIXELS</span></div>
+      <div class="leds">
+        <span><i class="led green" id="pwrled"></i>PWR</span>
+        <span><i class="led off" id="recled"></i>REC</span>
+      </div>
+    </div>
+
+    <div class="lcd-bezel">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+      <div class="lcd" id="lcd">
+        <div class="vidwrap" id="vidwrap">
+          <video id="video" autoplay playsinline muted></video>
+        </div>
+        <canvas id="snap" class="hidden"></canvas>
+
+        <div class="hud" id="hud">
+          <div class="row">
+            <span class="rec"><i></i>REC</span>
+            <span class="mode" id="modetag">AUTO</span>
+            <span class="batt" aria-label="battery"><i></i><i></i><i></i><i class="dim"></i></span>
+          </div>
+          <div class="focus" id="focus"><i></i></div>
+          <div class="row">
+            <span class="zoomtag" id="zoomtag">W [#----] T</span>
+            <span class="datestamp" id="datestamp">01 01 2006 00:00</span>
+          </div>
+        </div>
+
+        <div class="nosignal" id="nosignal">
+          <div>BTS MOMENT CAM</div>
+          <div style="font-size:14px;opacity:.8">INSERT MOMENT ▸ ALLOW CAMERA</div>
+          <button id="startbtn">▶ POWER ON</button>
+        </div>
+
+        <div class="develop hidden" id="develop">
+          <div class="thumb"><img id="devthumb" alt="" /></div>
+          <div class="stagetxt" id="stagetxt">DEVELOPING</div>
+          <div class="prog" id="prog"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="tiny" id="devtiny">PLEASE DO NOT REMOVE MEMORY CARD</div>
+        </div>
+        <div class="glare"></div>
+      </div>
+      <span class="lcd-label">2.0" TFT LCD</span>
+    </div>
+
+    <!-- ============ CONTROLS ============ -->
+    <div class="deck">
+      <div class="left">
+        <div class="ctl">
+          <button class="pbtn flip" id="flipbtn" aria-label="Flip camera (front / rear)"></button>
+          <span class="lbl">FLIP</span>
+        </div>
+        <div class="ctl">
+          <button class="pbtn flash" id="flashbtn" aria-label="Toggle flash" aria-pressed="false"></button>
+          <span class="lbl">FLASH</span>
+        </div>
+      </div>
+
+      <div class="shutter-wrap">
+        <div class="collar">
+          <button class="pbtn shutter" id="shutter" aria-label="Shutter — take photo"><b>●</b>SHUTTER</button>
+        </div>
+        <span class="lbl" style="font-size:6px;color:#2a2c38;text-shadow:0 1px 0 #fff">PRESS TO CAPTURE MOMENT</span>
+      </div>
+
+      <div class="right">
+        <div class="ctl">
+          <div class="rocker" role="group" aria-label="Zoom">
+            <button class="t" id="zoomin" aria-label="Zoom in (tele)">T</button>
+            <button class="w" id="zoomout" aria-label="Zoom out (wide)">W</button>
+          </div>
+          <span class="lbl">ZOOM</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip">
+      <span class="plate">MODE: <em id="platemode">MOMENT</em></span>
+      <span class="sticker oncam">ARMY EDITION</span>
+      <span class="plate">MADE IN <em>BANGTAN</em></span>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="result" id="result" aria-live="polite">
+    <div class="result-title" id="resulttitle">THIS MOMENT SOUNDS LIKE...</div>
+    <div class="scene">
+      <figure class="polaroid" id="polaroid">
+        <span class="tape"></span>
+        <span class="stick"><span class="heart" style="--u:4px;animation:none"></span></span>
+        <div class="photo"><img id="photo" alt="Your captured moment" /></div>
+        <figcaption class="cap"><span id="capdate">01.01.2006</span><small>BTS MOMENT #0001</small></figcaption>
+      </figure>
+
+      <div class="cassette" id="cassette" aria-label="Cassette tape">
+        <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span><span class="screw cm"></span>
+        <div class="clabel">
+          <span class="side">A</span>
+          <span class="abtag">C-60</span>
+          <div class="txt">this moment sounds like<b id="songname">SPRING DAY</b><small>BTS · YOU NEVER WALK ALONE</small></div>
+          <div class="lines"></div>
+        </div>
+        <div class="twindow"><div class="reel l"></div><div class="reel r"></div></div>
+        <div class="tapeline"></div>
+        <div class="cbottom"><span class="hole"></span><span class="hole big"></span><span class="hole"></span><span class="hole big"></span><span class="hole"></span></div>
+      </div>
+    </div>
+
+    <div class="nowplay" id="nowplay"><span class="eq"><i></i><i></i><i></i><i></i></span><span id="nowtxt">TAPE READY</span></div>
+    <button class="playbtn" id="playbtn">▶ PLAY TAPE</button>
+    <button class="again" id="againbtn">↺ TAKE ANOTHER MOMENT</button>
+  </section>
+
+  <p class="footer">BTS MOMENT CAM v2.006 · A FICTIONAL CAMERA FROM AN ALTERNATE 2006 · NO PHOTOS LEAVE THIS DEVICE</p>
+</main>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const video=$('video'), vidwrap=$('vidwrap'), snap=$('snap'), nosignal=$('nosignal'), startbtn=$('startbtn');
+  const shutter=$('shutter'), flipbtn=$('flipbtn'), flashbtn=$('flashbtn'), zoomin=$('zoomin'), zoomout=$('zoomout');
+  const develop=$('develop'), stagetxt=$('stagetxt'), prog=$('prog'), devthumb=$('devthumb'), devtiny=$('devtiny');
+  const hud=$('hud'), focus=$('focus'), datestamp=$('datestamp'), zoomtag=$('zoomtag'), recled=$('recled'), modetag=$('modetag');
+  const result=$('result'), polaroid=$('polaroid'), cassette=$('cassette'), photo=$('photo'), capdate=$('capdate');
+  const playbtn=$('playbtn'), nowplay=$('nowplay'), nowtxt=$('nowtxt'), againbtn=$('againbtn'), camera=$('camera'), flashfx=$('flashfx');
+
+  let stream=null, facing='user', flashOn=false, zoom=1, busy=false, momentCount=0;
+  const ZOOMS=[1,1.25,1.6,2,2.5];
+
+  /* ---- date stamp: always 2006 ---- */
+  function stampNow(){
+    const d=new Date();
+    const p=n=>String(n).padStart(2,'0');
+    datestamp.textContent=`${p(d.getDate())} ${p(d.getMonth()+1)} 2006 ${p(d.getHours())}:${p(d.getMinutes())}`;
+    return `${p(d.getDate())}.${p(d.getMonth()+1)}.2006`;
+  }
+  stampNow(); setInterval(stampNow,15000);
+
+  /* ---- camera ---- */
+  async function startCamera(){
+    stopCamera();
+    nosignal.classList.remove('noise');
+    nosignal.querySelector('div').textContent='SEARCHING SIGNAL';
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:960}},audio:false});
+      video.srcObject=stream;
+      await video.play().catch(()=>{});
+      video.classList.toggle('mirror',facing==='user');
+      nosignal.classList.add('hidden');
+      hud.classList.remove('hidden');
+      recled.className='led red';
+      shutter.disabled=false;
+    }catch(err){
+      console.log('[v0] camera error:',err && err.message);
+      nosignal.classList.remove('hidden');
+      nosignal.classList.add('noise');
+      nosignal.querySelector('div').textContent='NO SIGNAL';
+      nosignal.querySelectorAll('div')[1].textContent='CAMERA BLOCKED ▸ CHECK PERMISSION';
+      startbtn.textContent='↻ RETRY';
+      recled.className='led off';
+    }
+  }
+  function stopCamera(){ if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;} }
+  function applyZoom(){
+    video.style.transform=`${facing==='user'?'scaleX(-1) ':''}scale(${zoom})`;
+    const idx=ZOOMS.indexOf(zoom);
+    zoomtag.textContent='W '+'▮'.repeat(idx+1)+'▯'.repeat(ZOOMS.length-idx-1)+' T';
+  }
+
+  startbtn.addEventListener('click',startCamera);
+  shutter.disabled=true;
+
+  flipbtn.addEventListener('click',()=>{
+    if(busy) return;
+    facing = facing==='user' ? 'environment' : 'user';
+    modetag.textContent = facing==='user' ? 'SELF ♡' : 'AUTO ♡';
+    if(stream) startCamera().then(applyZoom);
+  });
+  flashbtn.addEventListener('click',()=>{
+    flashOn=!flashOn;
+    flashbtn.classList.toggle('on',flashOn);
+    flashbtn.setAttribute('aria-pressed',String(flashOn));
+    modetag.textContent = (facing==='user'?'SELF':'AUTO') + (flashOn?' ⚡':' ♡');
+  });
+  zoomin.addEventListener('click',()=>{ const i=ZOOMS.indexOf(zoom); if(i<ZOOMS.length-1){zoom=ZOOMS[i+1];applyZoom();} });
+  zoomout.addEventListener('click',()=>{ const i=ZOOMS.indexOf(zoom); if(i>0){zoom=ZOOMS[i-1];applyZoom();} });
+  applyZoom();
+
+  /* keyboard: space/enter = shutter (physical feel) */
+  document.addEventListener('keydown',e=>{
+    if(e.code==='Space' && document.activeElement.tagName!=='BUTTON'){e.preventDefault();shutter.classList.add('down');}
+  });
+  document.addEventListener('keyup',e=>{
+    if(e.code==='Space' && document.activeElement.tagName!=='BUTTON'){shutter.classList.remove('down');shutter.click();}
+  });
+
+  /* ---- capture ---- */
+  function captureFrame(){
+    const vw=video.videoWidth||640, vh=video.videoHeight||480;
+    const size=Math.min(vw,vh)/zoom;              // square crop, honoring zoom
+    const sx=(vw-size)/2, sy=(vh-size)/2;
+    snap.width=640; snap.height=640;
+    const ctx=snap.getContext('2d');
+    if(facing==='user'){ ctx.translate(snap.width,0); ctx.scale(-1,1); }
+    ctx.drawImage(video,sx,sy,size,size,0,0,snap.width,snap.height);
+    ctx.setTransform(1,0,0,1,0,0);
+    if(flashOn){ ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fillRect(0,0,snap.width,snap.height); }
+    /* early-digicam warmth + date stamp burned into the photo */
+    ctx.fillStyle='rgba(255,150,60,.06)'; ctx.fillRect(0,0,snap.width,snap.height);
+    ctx.font='28px "VT323", monospace'; ctx.fillStyle='#ffb545'; ctx.shadowColor='#000'; ctx.shadowBlur=3;
+    ctx.fillText(datestamp.textContent, 16, snap.height-18);
+    return snap.toDataURL('image/jpeg',.9);
+  }
+
+  const STAGES=['DEVELOPING','READING LIGHT','READING COLORS','READING ATMOSPHERE','READING THE MOMENT','FINDING A SOUNDTRACK'];
+  const TINY=['PLEASE DO NOT REMOVE MEMORY CARD','EXPOSURE +0.3 EV','WB: MOMENT','MOOD SENSOR ACTIVE','ARMY MODE ENGAGED','SEARCHING DISCOGRAPHY 2013-2026'];
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+  async function takePhoto(){
+    if(busy || !stream) return;
+    busy=true; shutter.disabled=true;
+    flipbtn.disabled=flashbtn.disabled=true;
+
+    focus.classList.add('locked');
+    await wait(220);
+    if(flashOn){ flashfx.classList.remove('go'); void flashfx.offsetWidth; flashfx.classList.add('go'); }
+    camera.classList.add('shake'); setTimeout(()=>camera.classList.remove('shake'),300);
+
+    const data=captureFrame();
+    devthumb.src=data;
+    focus.classList.remove('locked');
+
+    /* developing sequence on the LCD */
+    hud.classList.add('hidden'); develop.classList.remove('hidden');
+    const bars=[...prog.children]; bars.forEach(b=>b.classList.remove('on'));
+    for(let i=0;i<STAGES.length;i++){
+      stagetxt.textContent=STAGES[i]; devtiny.textContent=TINY[i];
+      const upto=Math.round((i+1)/STAGES.length*bars.length);
+      for(let b=0;b<upto;b++){ bars[b].classList.add('on'); }
+      await wait(i===STAGES.length-1?1100:800);
+    }
+    stagetxt.textContent='MATCH FOUND ♡'; devtiny.textContent='WRITING TO TAPE...';
+    await wait(700);
+
+    /* result */
+    momentCount++;
+    photo.src=data;
+    capdate.textContent=stampNow();
+    polaroid.querySelector('.cap small').textContent='BTS MOMENT #'+String(momentCount).padStart(4,'0');
+    polaroid.style.transform=`rotate(${(-6+Math.random()*4).toFixed(1)}deg) translateY(30px)`;
+    result.classList.add('show');
+    result.scrollIntoView({behavior:'smooth',block:'start'});
+    await wait(150);
+    polaroid.classList.add('in');
+    polaroid.style.transform=`rotate(${(-6+Math.random()*4).toFixed(1)}deg) translateY(0)`;
+    await wait(900);
+    cassette.classList.add('in');
+    cassette.style.transform=`translateX(0) rotate(${(1.5+Math.random()*3).toFixed(1)}deg)`;
+
+    /* return LCD to live view */
+    develop.classList.add('hidden'); hud.classList.remove('hidden');
+    busy=false; shutter.disabled=false; flipbtn.disabled=flashbtn.disabled=false;
+  }
+  shutter.addEventListener('click',takePhoto);
+
+  /* ---- tape ---- */
+  let playing=false;
+  playbtn.addEventListener('click',()=>{
+    playing=!playing;
+    cassette.classList.toggle('spinning',playing);
+    playbtn.classList.toggle('playing',playing);
+    nowplay.classList.toggle('playing-eq',playing);
+    playbtn.textContent = playing ? '■ STOP TAPE' : '▶ PLAY TAPE';
+    nowtxt.textContent = playing ? 'NOW PLAYING: BTS — SPRING DAY' : 'TAPE PAUSED';
+  });
+
+  againbtn.addEventListener('click',()=>{
+    playing=false;
+    cassette.classList.remove('spinning','in'); playbtn.classList.remove('playing'); nowplay.classList.remove('playing-eq');
+    playbtn.textContent='▶ PLAY TAPE'; nowtxt.textContent='TAPE READY';
+    polaroid.classList.remove('in');
+    cassette.style.transform='';
+    setTimeout(()=>result.classList.remove('show'),500);
+    camera.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+
+  window.addEventListener('pagehide',stopCamera);
+})();
+</script>
+</body>
+</html>
